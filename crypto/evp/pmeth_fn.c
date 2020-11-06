@@ -67,7 +67,7 @@ int EVP_PKEY_sign(EVP_PKEY_CTX *ctx,
     int ret = ctx->pmeth->sign(ctx, sig, siglen, tbs, tbslen);
     	struct timespec ts_end;
     timespec_get(&ts_end, TIME_UTC);
-	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
+	printf("%ld,", ts_end.tv_nsec-ts_begin.tv_nsec);
 	return ret;
 }
 
@@ -106,7 +106,7 @@ int EVP_PKEY_verify(EVP_PKEY_CTX *ctx,
     int ret = ctx->pmeth->verify(ctx, sig, siglen, tbs, tbslen);
 	struct timespec ts_end;
     timespec_get(&ts_end, TIME_UTC);
-	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
+	printf("%ld,", ts_end.tv_nsec-ts_begin.tv_nsec);
 	return ret;
 }
 

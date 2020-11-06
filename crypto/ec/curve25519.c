@@ -5432,6 +5432,8 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 int ED25519_sign(uint8_t *out_sig, const uint8_t *message, size_t message_len,
                  const uint8_t public_key[32], const uint8_t private_key[32])
 {
+	struct timespec ts_begin;
+	timespec_get(&ts_begin, TIME_UTC);
     uint8_t az[SHA512_DIGEST_LENGTH];
     uint8_t nonce[SHA512_DIGEST_LENGTH];
     ge_p3 R;
@@ -5467,7 +5469,9 @@ int ED25519_sign(uint8_t *out_sig, const uint8_t *message, size_t message_len,
     OPENSSL_cleanse(&hash_ctx, sizeof(hash_ctx));
     OPENSSL_cleanse(nonce, sizeof(nonce));
     OPENSSL_cleanse(az, sizeof(az));
-
+	struct timespec ts_end;
+    timespec_get(&ts_end, TIME_UTC);
+	printf("%ld,", ts_end.tv_nsec-ts_begin.tv_nsec);
     return 1;
 }
 
@@ -5476,6 +5480,8 @@ static const char allzeroes[15];
 int ED25519_verify(const uint8_t *message, size_t message_len,
                    const uint8_t signature[64], const uint8_t public_key[32])
 {
+	struct timespec ts_begin;
+	timespec_get(&ts_begin, TIME_UTC);
     int i;
     ge_p3 A;
     const uint8_t *r, *s;
@@ -5538,7 +5544,11 @@ int ED25519_verify(const uint8_t *message, size_t message_len,
 
     ge_tobytes(rcheck, &R);
 
-    return CRYPTO_memcmp(rcheck, r, sizeof(rcheck)) == 0;
+    int ret = CRYPTO_memcmp(rcheck, r, sizeof(rcheck)) == 0;
+    struct timespec ts_end;
+    timespec_get(&ts_end, TIME_UTC);
+	printf("%ld,", ts_end.tv_nsec-ts_begin.tv_nsec);
+    return ret;
 }
 
 void ED25519_public_from_private(uint8_t out_public_key[32],

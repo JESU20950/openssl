@@ -113,7 +113,7 @@ int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey)
     }
 	struct timespec ts_end;
     timespec_get(&ts_end, TIME_UTC);
-	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
+	printf("%ld,", ts_end.tv_nsec-ts_begin.tv_nsec);
     return ret;
 }
 
