@@ -85,8 +85,9 @@ int EVP_PKEY_keygen_init(EVP_PKEY_CTX *ctx)
 
 int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey)
 {
+	struct timespec ts_begin;
+	timespec_get(&ts_begin, TIME_UTC);
     int ret;
-
     if (!ctx || !ctx->pmeth || !ctx->pmeth->keygen) {
         EVPerr(EVP_F_EVP_PKEY_KEYGEN,
                EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
@@ -110,6 +111,9 @@ int EVP_PKEY_keygen(EVP_PKEY_CTX *ctx, EVP_PKEY **ppkey)
         EVP_PKEY_free(*ppkey);
         *ppkey = NULL;
     }
+	struct timespec ts_end;
+    timespec_get(&ts_end, TIME_UTC);
+	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
     return ret;
 }
 

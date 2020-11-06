@@ -4820,13 +4820,16 @@ int ssl_derive(SSL *s, EVP_PKEY *privkey, EVP_PKEY *pubkey, int gensecret)
                  ERR_R_MALLOC_FAILURE);
         goto err;
     }
-
+	struct timespec ts_begin;
+	timespec_get(&ts_begin, TIME_UTC);
     if (EVP_PKEY_derive(pctx, pms, &pmslen) <= 0) {
         SSLfatal(s, SSL_AD_INTERNAL_ERROR, SSL_F_SSL_DERIVE,
                  ERR_R_INTERNAL_ERROR);
         goto err;
     }
-
+	struct timespec ts_end;
+    timespec_get(&ts_end, TIME_UTC);
+	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
     if (gensecret) {
         /* SSLfatal() called as appropriate in the below functions */
         if (SSL_IS_TLS13(s)) {

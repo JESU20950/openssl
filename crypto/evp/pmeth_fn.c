@@ -52,7 +52,8 @@ int EVP_PKEY_sign_init(EVP_PKEY_CTX *ctx)
 int EVP_PKEY_sign(EVP_PKEY_CTX *ctx,
                   unsigned char *sig, size_t *siglen,
                   const unsigned char *tbs, size_t tbslen)
-{
+{ 	struct timespec ts_begin;
+	timespec_get(&ts_begin, TIME_UTC);
     if (!ctx || !ctx->pmeth || !ctx->pmeth->sign) {
         EVPerr(EVP_F_EVP_PKEY_SIGN,
                EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
@@ -63,7 +64,11 @@ int EVP_PKEY_sign(EVP_PKEY_CTX *ctx,
         return -1;
     }
     M_check_autoarg(ctx, sig, siglen, EVP_F_EVP_PKEY_SIGN)
-        return ctx->pmeth->sign(ctx, sig, siglen, tbs, tbslen);
+    int ret = ctx->pmeth->sign(ctx, sig, siglen, tbs, tbslen);
+    	struct timespec ts_end;
+    timespec_get(&ts_end, TIME_UTC);
+	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
+	return ret;
 }
 
 int EVP_PKEY_verify_init(EVP_PKEY_CTX *ctx)
@@ -86,7 +91,8 @@ int EVP_PKEY_verify_init(EVP_PKEY_CTX *ctx)
 int EVP_PKEY_verify(EVP_PKEY_CTX *ctx,
                     const unsigned char *sig, size_t siglen,
                     const unsigned char *tbs, size_t tbslen)
-{
+{	struct timespec ts_begin;
+	timespec_get(&ts_begin, TIME_UTC);
     if (!ctx || !ctx->pmeth || !ctx->pmeth->verify) {
         EVPerr(EVP_F_EVP_PKEY_VERIFY,
                EVP_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE);
@@ -96,7 +102,12 @@ int EVP_PKEY_verify(EVP_PKEY_CTX *ctx,
         EVPerr(EVP_F_EVP_PKEY_VERIFY, EVP_R_OPERATON_NOT_INITIALIZED);
         return -1;
     }
-    return ctx->pmeth->verify(ctx, sig, siglen, tbs, tbslen);
+   
+    int ret = ctx->pmeth->verify(ctx, sig, siglen, tbs, tbslen);
+	struct timespec ts_end;
+    timespec_get(&ts_end, TIME_UTC);
+	printf("%091d,", ts_end.tv_nsec-ts_begin.tv_nsec);
+	return ret;
 }
 
 int EVP_PKEY_verify_recover_init(EVP_PKEY_CTX *ctx)
